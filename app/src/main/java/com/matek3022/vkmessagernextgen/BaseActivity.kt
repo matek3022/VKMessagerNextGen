@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
-import com.matek3022.vkmessagernextgen.ui.DialogRVAdapter
+import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
 import io.reactivex.disposables.Disposable
 
 class BaseActivity : AppCompatActivity() {
@@ -16,13 +16,16 @@ class BaseActivity : AppCompatActivity() {
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var rv: RecyclerView
     val disposables = ArrayList<Disposable>()
-    val adapter = DialogRVAdapter(ArrayList())
+    lateinit var adapter: DialogRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
-        rv = findViewById<RecyclerView>(R.id.recyclerView)
-        swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.swipeRL)
+        adapter = DialogRVAdapter(ArrayList()) {
+            startActivity(MessagesActivity.getIntent(this, it.conversation.peer.id))
+        }
+        rv = findViewById(R.id.recyclerView)
+        swipeRefreshLayout = findViewById(R.id.swipeRL)
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this)
         dialogsViewModel = ViewModelProviders.of(this).get(DialogsViewModel::class.java)

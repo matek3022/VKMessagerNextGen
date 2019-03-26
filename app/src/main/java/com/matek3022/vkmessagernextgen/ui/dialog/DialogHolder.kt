@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.matek3022.vkmessagernextgen.R
 import com.matek3022.vkmessagernextgen.rxapi.result.ResultGetConversation
 import com.matek3022.vkmessagernextgen.ui.base.BaseRVHolder
@@ -26,8 +27,8 @@ class DialogHolder(itemView: View, click:((ResultGetConversation.Item) -> Unit)?
 
     override fun bind(item: ResultGetConversation.Item) {
         timeTV.text = convertToTime(item.lastMessage.date)
-        Glide.with(itemView.context).load(item.user?.photoUrlOrig200).into(avatar)
-        personName.text = item.user?.firstName ?: "" + item.user?.lastName ?: ""
+        Glide.with(itemView.context).load(item.user?.photoUrl200).apply(RequestOptions.circleCropTransform()).into(avatar)
+        personName.text = "${item.user?.firstName ?: ""} ${item.user?.lastName ?: ""}"
         lastMessageTV.text = item.lastMessage.text
         if (item.conversation.unreadMessageCount > 0) {
             messageCountTV.visibility = View.VISIBLE

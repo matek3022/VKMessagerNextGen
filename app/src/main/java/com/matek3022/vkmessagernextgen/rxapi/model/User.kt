@@ -12,6 +12,6 @@ data class User(val id: Int,
                 val deactivated: String?,
                 @SerializedName("is_closed") val isClosed: Boolean,
                 @SerializedName("can_access_closed") val canAccessClosed: Boolean,
-                @SerializedName("photo_200_orig") val photoUrlOrig200: String,
+                @SerializedName("photo_200") val photoUrl200: String,
                 val online: Int) {
 }

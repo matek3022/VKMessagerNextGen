@@ -23,7 +23,39 @@ fun convertToTime(unixTime: Int): String {
         if (month == currmonth) {
             if (day == currday) {
                 return SimpleDateFormat("hh:mm", Locale.ENGLISH).format(df)
-            } else return day
-        } else return month
+            } else return "$day ${getMonthFromInt(month)}"
+        } else return getMonth(month)
     } else return year
+}
+
+private fun getMonthFromInt(month: String) = when(month.toInt()) {
+    0 -> "Января"
+    1 -> "Февраля"
+    2 -> "Марта"
+    3 -> "Апреля"
+    4 -> "Мая"
+    5 -> "Июня"
+    6 -> "Июля"
+    7 -> "Августа"
+    8 -> "Сентября"
+    9  -> "Ноября"
+    10 -> "Октября"
+    11 -> "Декабря"
+    else -> "Неизвестного месяца"
+}
+
+private fun getMonth(month: String) = when(month.toInt()) {
+    0 -> "Январь"
+    1 -> "Февраль"
+    2 -> "Март"
+    3 -> "Апрель"
+    4 -> "Май"
+    5 -> "Июнь"
+    6 -> "Июль"
+    7 -> "Август"
+    8 -> "Сентябрь"
+    9  -> "Ноябрь"
+    10 -> "Октябрь"
+    11 -> "Декабрь"
+    else -> "Неизвестный месяц"
 }

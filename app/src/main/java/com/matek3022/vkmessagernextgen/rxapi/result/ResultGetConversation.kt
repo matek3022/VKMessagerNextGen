@@ -13,15 +13,16 @@ data class ResultGetConversation(
     val count: Int,
     val items: List<Item>,
     @SerializedName("unread_count") val unreadCount: Int,
-    val profiles: List<User>
+    var profiles: List<User>? = null
 ) {
     data class Item(val conversation: Conversation,
                     @SerializedName("last_message") val lastMessage: Message,
                     var user: User? = null)
 
     fun processUserToItem() {
+        if (profiles == null) profiles = ArrayList()
         items.forEach { item ->
-            item.user = profiles.find { it.id == item.conversation.peer.id }
+            item.user = profiles?.find { it.id == item.conversation.peer.id }
         }
     }
 }

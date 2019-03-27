@@ -3,13 +3,12 @@ package com.matek3022.vkmessagernextgen
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.matek3022.vkmessagernextgen.rxapi.model.User
 import com.matek3022.vkmessagernextgen.rxapi.vm.MessagesViewModel
 import com.matek3022.vkmessagernextgen.ui.message.MessageRVAdapter
-import com.matek3022.vkmessagernextgen.utils.stega.codeText
 import io.reactivex.disposables.Disposable
 
 class MessagesActivity : AppCompatActivity() {
@@ -63,23 +61,26 @@ class MessagesActivity : AppCompatActivity() {
         sendMessageBT.setOnClickListener {
             if (adapter.isStega) {
                 progressChange(true, "Кодирую...")
-                val options = BitmapFactory.Options()
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888
-                options.inMutable = true
-                val c = BitmapFactory.decodeResource(resources, R.drawable.test, options)
-                c.codeText(inputET.text.toString())
-                progressChange(true, "Отправляю...")
-                disposables.add(messageVM.photoUploaded.subscribe {
-                    messageVM.sendMessage(
-                        this@MessagesActivity,
-                        userId = user?.id ?: 0,
-                        message = "",
-                        attachment = "photo${it.ownerId}_${it.id}",
-                        stop = {
-                            messageSended()
+                messageVM.codeText(inputET.text.toString(), stop = { bitmap, e ->
+                    e?.let {
+                        Toast.makeText(this@MessagesActivity, it.message, Toast.LENGTH_SHORT).show()
+                        progressChange(false)
+                    }
+                    bitmap?.let {
+                        progressChange(true, "Отправляю...")
+                        disposables.add(messageVM.photoUploaded.subscribe {
+                            messageVM.sendMessage(
+                                this@MessagesActivity,
+                                userId = user?.id ?: 0,
+                                message = "",
+                                attachment = "photo${it.ownerId}_${it.id}",
+                                stop = {
+                                    messageSended()
+                                })
                         })
+                        messageVM.uploadPhoto(this@MessagesActivity, it)
+                    }
                 })
-                messageVM.uploadPhoto(this@MessagesActivity, c)
             } else {
                 progressChange(true, "Отправляю...")
                 messageVM.sendMessage(

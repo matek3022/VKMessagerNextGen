@@ -22,7 +22,7 @@ class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         adapter = DialogRVAdapter(ArrayList()) {
-            startActivity(MessagesActivity.getIntent(this, it.conversation.peer.id))
+            startActivity(MessagesActivity.getIntent(this, it.user))
         }
         rv = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRL)

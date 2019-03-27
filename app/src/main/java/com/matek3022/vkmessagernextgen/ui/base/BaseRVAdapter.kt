@@ -10,7 +10,7 @@ abstract class BaseRVAdapter<T: BaseRVHolder<B>, B>(val items: List<B>, val clic
 
     final override fun getItemCount() = items.size
 
-    final override fun onBindViewHolder(holder: T, position: Int) {
+    override fun onBindViewHolder(holder: T, position: Int) {
         holder.bind(items[position])
     }
 }

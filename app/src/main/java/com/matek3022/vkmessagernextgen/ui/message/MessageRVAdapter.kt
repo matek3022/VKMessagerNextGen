@@ -10,8 +10,17 @@ import com.matek3022.vkmessagernextgen.ui.base.BaseRVAdapter
  * @author matek3022 (semenovmm@altarix.ru)
  *         on 13.03.19.
  */
-class MessageRVAdapter(items: List<Message>, val currPeerId: Int,
-                       click:((item: Message) -> Unit)? = null): BaseRVAdapter<MessageHolder, Message>(items, click) {
+class MessageRVAdapter(
+    items: List<Message>, val currPeerId: Int,
+    click: ((item: Message) -> Unit)? = null
+) : BaseRVAdapter<MessageHolder, Message>(items, click) {
+
+
+    var isStega = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     /**
      * 1 - исходящие
@@ -21,12 +30,15 @@ class MessageRVAdapter(items: List<Message>, val currPeerId: Int,
         return if (items[position].fromId == currPeerId) 0 else 1
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-            = MessageHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MessageHolder(
         LayoutInflater.from(parent.context).inflate(
             if (viewType == 0) R.layout.item_message_inbox else R.layout.item_message_outbox,
             null
         ),
         click
     )
+
+    override fun onBindViewHolder(holder: MessageHolder, position: Int) {
+        holder.bind(items[position], isStega)
+    }
 }

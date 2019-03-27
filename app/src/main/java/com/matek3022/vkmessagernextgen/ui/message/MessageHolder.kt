@@ -1,23 +1,19 @@
 package com.matek3022.vkmessagernextgen.ui.message
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.matek3022.vkmessagernextgen.R
 import com.matek3022.vkmessagernextgen.rxapi.model.Attachment
 import com.matek3022.vkmessagernextgen.rxapi.model.Message
 import com.matek3022.vkmessagernextgen.ui.base.BaseRVHolder
 import com.matek3022.vkmessagernextgen.utils.convertToTime
+import com.matek3022.vkmessagernextgen.utils.stega.getText
 
 /**
  * @author matek3022 (semenovmm@altarix.ru)
@@ -33,42 +29,33 @@ class MessageHolder(
     private val text = itemView.findViewById<TextView>(R.id.textTV)
     private val attachContainer = itemView.findViewById<LinearLayout>(R.id.attachContainer)
     private val root = itemView.findViewById<View>(R.id.root)
-
-    override fun bind(item: Message) {
+    fun bind(item: Message, isStega: Boolean) {
         title.text = convertToTime(item.date)
+        if (isStega) text.visibility = View.GONE
+        else text.visibility = View.VISIBLE
         text.text = item.text
         attachContainer.removeAllViews()
         item.attachments.forEach {
             it.photo?.let { photo ->
-                val image = ImageView(attachContainer.context)
-                image.setOnClickListener { imageClick?.invoke(photo) }
-                attachContainer.addView(image)
-                Glide.with(itemView.context).load(photo.getOriginalUrl())
-                    .listener(object : SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL),
-                        RequestListener<Drawable> {
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return true
-                        }
-
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return true
-                        }
-
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-
-                        }
-                    }).into(image)
+                if (isStega) {
+                    val textView = TextView(attachContainer.context).apply { visibility = View.GONE }
+                    attachContainer.addView(textView)
+                    Glide.with(itemView.context).asBitmap().load(photo.getOriginalUrl())
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                try {
+                                    val textOut = resource.getText()
+                                    textView.text = textOut
+                                    textView.visibility = View.VISIBLE
+                                } catch (e: Exception) {}
+                            }
+                        })
+                } else {
+                    val image = ImageView(attachContainer.context).apply { adjustViewBounds = true }
+                    image.setOnClickListener { imageClick?.invoke(photo) }
+                    attachContainer.addView(image)
+                    Glide.with(itemView.context).load(photo.getOriginalUrl()).into(image)
+                }
             }
         }
         root.setOnClickListener {

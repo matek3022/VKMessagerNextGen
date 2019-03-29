@@ -29,7 +29,7 @@ class DialogHolder(itemView: View, click:((ResultGetConversation.Item) -> Unit)?
         timeTV.text = convertToTime(item.lastMessage.date)
         Glide.with(itemView.context).load(item.user?.photoUrl200).apply(RequestOptions.circleCropTransform()).into(avatar)
         personName.text = "${item.user?.firstName ?: ""} ${item.user?.lastName ?: ""}"
-        lastMessageTV.text = item.lastMessage.text
+        lastMessageTV.text = if (item.lastMessage.text.isNotEmpty()) item.lastMessage.text else "Вложение"
         if (item.conversation.unreadMessageCount > 0) {
             messageCountTV.visibility = View.VISIBLE
             messageCountTV.text = item.conversation.unreadMessageCount.toString()

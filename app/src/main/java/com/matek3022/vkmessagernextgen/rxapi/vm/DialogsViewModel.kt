@@ -19,7 +19,9 @@ class DialogsViewModel : AbstractViewModel() {
                 response?.response?.processUserToItem()
                 launchUI {
                     stop?.invoke()
-                    response?.response?.items?.let {
+                    response?.response?.items?.filter {
+                        it.user != null
+                    }?.let {
                         dialogsSubject.onNext(it)
                     }
                 }

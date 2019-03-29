@@ -15,7 +15,7 @@ const val seed = 4L
 
 const val TEXT_ID = "text"
 
-fun Bitmap.codeText(text: String) {
+fun Bitmap.codeText(text: String): Bitmap {
     val bitArray = ArrayList<Boolean>()
     val byteArray = text.toByteArray()
     val byteSizeArr = Utils.intToByteArray(byteArray.size)
@@ -31,6 +31,7 @@ fun Bitmap.codeText(text: String) {
     val pixels = getPixels()
     pixels.inToPixels(bitArray)
     setPixels(pixels, 1)
+    return this
 }
 
 @Throws(Resources.NotFoundException::class)
@@ -45,8 +46,8 @@ fun ArrayList<ArrayList<Pixel>>.inToPixels(bitsArray: ArrayList<Boolean>) {
     val n = this.size
     val m = this[0].size
 //    val res = ArrayList<ArrayList<Pixel>>()
-    val matr8x8Red = FloatArray(8 * 8)
-    val matr8x8Green = FloatArray(8 * 8)
+//    val matr8x8Red = FloatArray(8 * 8)
+//    val matr8x8Green = FloatArray(8 * 8)
     val matr8x8Blue = FloatArray(8 * 8)
     val bitsCount = bitsArray.size
     val random = Random(seed)
@@ -73,18 +74,19 @@ fun ArrayList<ArrayList<Pixel>>.inToPixels(bitsArray: ArrayList<Boolean>) {
                 if (findingIndex != -1) {
                     for (ik in 0..7) {
                         for (jk in 0..7) {
-                            matr8x8Red[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].red.toFloat()
-                            matr8x8Green[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].green.toFloat()
+//                            matr8x8Red[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].red.toFloat()
+//                            matr8x8Green[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].green.toFloat()
                             matr8x8Blue[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].blue.toFloat()
                         }
                     }
                     //todo понять почему в 64 раза больше яркость получается и разобраться куда теряется бит
-                    Dct.forwardDCT8x8(matr8x8Red)
-                    Dct.forwardDCT8x8(matr8x8Green)
+//                    Dct.forwardDCT8x8(matr8x8Red)
+//                    Dct.forwardDCT8x8(matr8x8Green)
                     Dct.forwardDCT8x8(matr8x8Blue)
                     val bit = bitsArray[bitsInput]
-                    matr8x8Red.devideArray(64)
-                    matr8x8Green.devideArray(64)
+//                    matr8x8Red.devideArray(64)
+//                    matr8x8Green.devideArray(64)
+//                    matr8x8Blue.devideArray(64)
                     matr8x8Blue.devideArray(64)
                     toQuantiz(matr8x8Blue)
                     val lastBit = Math.abs(Math.round(matr8x8Blue[0] % 2))
@@ -97,16 +99,16 @@ fun ArrayList<ArrayList<Pixel>>.inToPixels(bitsArray: ArrayList<Boolean>) {
                     }
                     fromQuantiz(matr8x8Blue)
                     bitsInput++
-                    Dct.inverseDCT8x8(matr8x8Red)
-                    Dct.inverseDCT8x8(matr8x8Green)
+//                    Dct.inverseDCT8x8(matr8x8Red)
+//                    Dct.inverseDCT8x8(matr8x8Green)
                     Dct.inverseDCT8x8(matr8x8Blue)
                     for (ik in 0..7) {
                         for (jk in 0..7) {
-                            var currRed = matr8x8Red[ik * 8 + jk]
-                            var currGeen = matr8x8Green[ik * 8 + jk]
+//                            var currRed = matr8x8Red[ik * 8 + jk]
+//                            var currGeen = matr8x8Green[ik * 8 + jk]
                             var currBlue = matr8x8Blue[ik * 8 + jk]
-                            this[i * 8 + ik][j * 8 + jk].red = Math.round(currRed)
-                            this[i * 8 + ik][j * 8 + jk].green = Math.round(currGeen)
+//                            this[i * 8 + ik][j * 8 + jk].red = Math.round(currRed)
+//                            this[i * 8 + ik][j * 8 + jk].green = Math.round(currGeen)
                             this[i * 8 + ik][j * 8 + jk].blue = Math.round(currBlue)
                         }
                     }
@@ -120,8 +122,8 @@ fun ArrayList<ArrayList<Pixel>>.inToPixels(bitsArray: ArrayList<Boolean>) {
 fun ArrayList<ArrayList<Pixel>>.fromPixels(id: String): List<Boolean> {
     val n = this.size
     val m = this[0].size
-    val matr8x8Red = FloatArray(8 * 8)
-    val matr8x8Green = FloatArray(8 * 8)
+//    val matr8x8Red = FloatArray(8 * 8)
+//    val matr8x8Green = FloatArray(8 * 8)
     val matr8x8Blue = FloatArray(8 * 8)
     val random = Random(seed)
     val blockNcount = n / 8
@@ -145,16 +147,16 @@ fun ArrayList<ArrayList<Pixel>>.fromPixels(id: String): List<Boolean> {
                     if (findingIndex != -1) {
                         for (ik in 0..7) {
                             for (jk in 0..7) {
-                                matr8x8Red[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].red.toFloat()
-                                matr8x8Green[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].green.toFloat()
+//                                matr8x8Red[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].red.toFloat()
+//                                matr8x8Green[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].green.toFloat()
                                 matr8x8Blue[ik * 8 + jk] = this[i * 8 + ik][j * 8 + jk].blue.toFloat()
                             }
                         }
-                        Dct.forwardDCT8x8(matr8x8Red)
-                        Dct.forwardDCT8x8(matr8x8Green)
+//                        Dct.forwardDCT8x8(matr8x8Red)
+//                        Dct.forwardDCT8x8(matr8x8Green)
                         Dct.forwardDCT8x8(matr8x8Blue)
-                        matr8x8Red.devideArray(64)
-                        matr8x8Green.devideArray(64)
+//                        matr8x8Red.devideArray(64)
+//                        matr8x8Green.devideArray(64)
                         matr8x8Blue.devideArray(64)
                         toQuantiz(matr8x8Blue)
                         val lastBit = Math.abs(Math.round(matr8x8Blue[0] % 2))

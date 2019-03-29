@@ -14,7 +14,7 @@ data class Message(
     val date: Int,
     @SerializedName("peer_id") val peerId: Int,
     @SerializedName("from_id") val fromId: Int,
-    val text: String,
+    var text: String,
     @SerializedName("random_id") val randomId: Int? = null,
-    val attachments: List<Attachment>
+    var attachments: List<Attachment>
 )

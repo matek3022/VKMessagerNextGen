@@ -8,7 +8,7 @@ import com.matek3022.vkmessagernextgen.rxapi.model.Message
  *         on 13.03.19.
  */
 data class ResultGetMessages(val count: Int?,
-                             val items: List<Message>,
+                             var items: List<Message>,
                              @SerializedName("in_read") val inRead: Int,
                              @SerializedName("out_read") val outRead: Int) {
 }

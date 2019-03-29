@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -37,18 +36,21 @@ class MessagesActivity : AppCompatActivity() {
     lateinit var adapter: MessageRVAdapter
     private var user: User? = null
     private var progress: ProgressDialog? = null
+
+    var isStega = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
         user = intent.getSerializableExtra(EXTRA_USER) as User?
         title = "${user?.firstName} ${user?.lastName}"
+        messageVM = ViewModelProviders.of(this).get(MessagesViewModel::class.java)
         adapter = MessageRVAdapter(ArrayList(), user?.id ?: 0)
         rv = findViewById(R.id.list)
         sendMessageBT = findViewById(R.id.sendMessageBT)
         inputET = findViewById(R.id.inputMessageET)
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this).apply { reverseLayout = true }
-        messageVM = ViewModelProviders.of(this).get(MessagesViewModel::class.java)
         disposables.add(messageVM.messagesSubject.subscribe { new ->
             (adapter.items as ArrayList).let { old ->
                 old.clear()
@@ -59,51 +61,23 @@ class MessagesActivity : AppCompatActivity() {
         if (adapter.itemCount == 0) update()
 
         sendMessageBT.setOnClickListener {
-            if (adapter.isStega) {
-                progressChange(true, "Кодирую...")
-                messageVM.codeText(inputET.text.toString(), stop = { bitmap, e ->
-                    e?.let {
-                        Toast.makeText(this@MessagesActivity, it.message, Toast.LENGTH_SHORT).show()
-                        progressChange(false)
-                    }
-                    bitmap?.let {
-                        progressChange(true, "Отправляю...")
-                        disposables.add(messageVM.photoUploaded.subscribe {
-                            messageVM.sendMessage(
-                                this@MessagesActivity,
-                                userId = user?.id ?: 0,
-                                message = "",
-                                attachment = "photo${it.ownerId}_${it.id}",
-                                stop = {
-                                    messageSended()
-                                })
-                        })
-                        messageVM.uploadPhoto(this@MessagesActivity, it)
-                    }
+            progressChange(true, "Отправляю...")
+            messageVM.sendMessage(this@MessagesActivity,
+                userId = user?.id ?: 0,
+                message = inputET.text.toString(),
+                isCoded = isStega,
+                stop = {
+                    progressChange(false)
+                    inputET.setText("")
+                    update()
                 })
-            } else {
-                progressChange(true, "Отправляю...")
-                messageVM.sendMessage(
-                    this@MessagesActivity,
-                    userId = user?.id ?: 0,
-                    message = inputET.text.toString(),
-                    attachment = "",
-                    stop = {
-                        messageSended()
-                    })
-            }
         }
-    }
-
-    private fun messageSended() {
-        progressChange(false)
-        inputET.setText("")
-        update()
     }
 
     private fun progressChange(isProgress: Boolean, message: String = "") {
         if (progress == null) progress = ProgressDialog(this)
         progress?.let {
+            it.setCancelable(false)
             it.setMessage(message)
             if (isProgress) it.show()
             else it.dismiss()
@@ -134,16 +108,23 @@ class MessagesActivity : AppCompatActivity() {
         dialog.setCancelable(false)
         dialog.setMessage("Включить/Выключить стеганографическое встраивание?")
         dialog.setPositiveButton("Вкл") { _, _ ->
-            adapter.isStega = true
+            isStega = true
+            update()
         }
         dialog.setNegativeButton("Выкл") { _, _ ->
-            adapter.isStega = false
+            isStega = false
+            update()
         }
         dialog.show()
     }
 
     private fun update() {
-        messageVM.update(this, user?.id ?: 0)
+        messageVM.update(this, isStega, user?.id ?: 0, start = {
+            progressChange(true, if (!isStega) "Обновляю..." else "Обновляю и декодирую...")
+        },
+            stop = {
+                progressChange(false)
+            })
     }
 
     override fun onDestroy() {

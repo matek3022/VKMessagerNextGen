@@ -77,17 +77,17 @@ class MessagesViewModel : AbstractViewModel() {
 
     private fun getBitmapToText(text: String): Bitmap? {
         val resList = arrayListOf(
-            R.drawable.test1
-//            R.drawable.test2,
-//            R.drawable.test3,
-//            R.drawable.test4,
-//            R.drawable.test5,
-//            R.drawable.test6,
-//            R.drawable.test7,
-//            R.drawable.test9,
-//            R.drawable.test11,
-//            R.drawable.test13,
-//            R.drawable.test14
+            R.drawable.test1,
+            R.drawable.test2,
+            R.drawable.test3,
+            R.drawable.test4,
+            R.drawable.test5,
+            R.drawable.test6,
+            R.drawable.test7,
+            R.drawable.test9,
+            R.drawable.test11,
+            R.drawable.test13,
+            R.drawable.test14
         ).filter { isNormBitmap(it, text) }
         if (resList.isEmpty()) return null
         return getBitmapFromRes(resList[if (resList.size > 1) Random().nextInt(resList.size - 1) else 0])
@@ -104,7 +104,7 @@ class MessagesViewModel : AbstractViewModel() {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeResource(App.instance.resources, resId, options)
-        return text.toByteArray().size * 8 < Math.round(0.3 * (options.outWidth / 8) * (options.outHeight / 8)).toInt()
+        return text.toByteArray().size * 8 < Math.round(0.41 * (options.outWidth / 8) * (options.outHeight / 8)).toInt()
     }
 
     fun update(

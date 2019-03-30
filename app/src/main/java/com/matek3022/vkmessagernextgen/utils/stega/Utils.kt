@@ -2,6 +2,7 @@ package com.matek3022.vkmessagernextgen.utils.stega
 
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Color
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -73,9 +74,9 @@ fun Bitmap.inToPixels(bitsArray: ArrayList<Boolean>) {
                     val bit = bitsArray[bitsInput]
 //                    toQuantiz(matrYColor)
                     if (bit) {
-                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 != 1)*/ matrYColor[7][7] = 100.0
+                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 != 1)*/ matrYColor[7][7] = 10.0
                     } else {
-                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 == 1) */matrYColor[7][7] = -100.0
+                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 == 1) */matrYColor[7][7] = -10.0
                     }
                     bitsInput++
 //                    fromQuantiz(matrYColor)
@@ -156,19 +157,18 @@ fun Bitmap.fromPixels(id: String): List<Boolean> {
     return res
 }
 
-fun Bitmap.getPixels(): ArrayList<ArrayList<Int>> {
-    val pixels = ArrayList<ArrayList<Int>>()
+fun Bitmap.getPixels(): ArrayList<ArrayList<Pixel>> {
+    val pixels = ArrayList<ArrayList<Pixel>>()
     for (i in 0 until width) {
         pixels.add(ArrayList())
         for (j in 0 until height) {
             val bitmapPixel = this.getPixel(i, j)
             pixels[i].add(
-                bitmapPixel
-//                Pixel(
-//                    Color.red(bitmapPixel),
-//                    Color.green(bitmapPixel),
-//                    Color.blue(bitmapPixel)
-//                )
+                Pixel(
+                    Color.red(bitmapPixel),
+                    Color.green(bitmapPixel),
+                    Color.blue(bitmapPixel)
+                )
             )
         }
     }
@@ -270,7 +270,7 @@ fun computePsnr(bitmap1: Bitmap, bitmap2: Bitmap): Double {
     val pixels2 = bitmap2.getPixels()
     pixels1.forEachIndexed { index1, arrayList ->
         arrayList.forEachIndexed { index2, pixel ->
-            //            mse += Math.abs((pixel.blue - pixels2[index1][index2].blue) * (pixel.blue - pixels2[index1][index2].blue))
+            mse += Math.abs((pixel.blue - pixels2[index1][index2].blue) * (pixel.blue - pixels2[index1][index2].blue))
         }
     }
     mse /= pixels1.size * pixels1[0].size

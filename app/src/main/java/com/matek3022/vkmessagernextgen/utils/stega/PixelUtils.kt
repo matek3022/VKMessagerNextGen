@@ -31,5 +31,12 @@ fun toRGB(y: Double, cb: Double, cr: Double): Int {
     val r: Double = y + 1.402 * (cr - 128)
     val g: Double = y - 0.344136 * (cb - 128) - 0.714136 * (cr - 128)
     val b: Double = y + 1.772 * (cb - 128)
-    return Color.rgb(Math.round(r).toInt(), Math.round(g).toInt(), Math.round(b).toInt())
+    return Color.rgb(getNormalColor(r), getNormalColor(g), getNormalColor(b))
+}
+
+fun getNormalColor(color: Double): Int {
+    val res = Math.round(color).toInt()
+    if (res < 0) return 0
+    if (res > 255) return 255
+    return res
 }

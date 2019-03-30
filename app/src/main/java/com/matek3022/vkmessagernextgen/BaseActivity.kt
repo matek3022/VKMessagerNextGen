@@ -1,7 +1,9 @@
 package com.matek3022.vkmessagernextgen
 
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,10 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
-import com.matek3022.vkmessagernextgen.utils.stega.getCb
-import com.matek3022.vkmessagernextgen.utils.stega.getCr
-import com.matek3022.vkmessagernextgen.utils.stega.getY
-import com.matek3022.vkmessagernextgen.utils.stega.toRGB
+import com.matek3022.vkmessagernextgen.utils.stega.codeText
+import com.matek3022.vkmessagernextgen.utils.stega.computePsnr
+import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
 
 class BaseActivity : AppCompatActivity() {
@@ -26,7 +27,7 @@ class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
-        test()
+//        test()
         adapter = DialogRVAdapter(ArrayList()) {
             startActivity(MessagesActivity.getIntent(this, it.user))
         }
@@ -47,18 +48,22 @@ class BaseActivity : AppCompatActivity() {
     }
 
     fun test() {
-        val yellow = Color.BLUE
-        val r = Color.red(Color.BLUE)
-        val g  = Color.green(Color.BLUE)
-        val b = Color.blue(Color.BLUE)
+        val resList = ArrayList<Pair<Int, Double>>()
+        for (i in 1..100) {
+            resList.add(i to getPsnrFromPercentage(i))
+        }
+    }
 
-        val y = getY(Color.BLUE)
-        val cr = getCr(Color.BLUE)
-        val cb = getCb(Color.BLUE)
-
-        val ycrcbYellow = toRGB(y, cb, cr)
-
-        val rgbYellow = Color.rgb(r,g,b)
+    fun getPsnrFromPercentage(percentage: Int): Double{
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        options.inMutable = true
+        var c = BitmapFactory.decodeResource(resources, R.drawable.test6, options)
+        var c1 = BitmapFactory.decodeResource(resources, R.drawable.test6, options)
+        val text = generateTextToPercentage(c, percentage)
+        c.codeText(text)
+        Log.wtf("tag_percentage", percentage.toString())
+        return computePsnr(c, c1)
     }
 
     private fun update() {

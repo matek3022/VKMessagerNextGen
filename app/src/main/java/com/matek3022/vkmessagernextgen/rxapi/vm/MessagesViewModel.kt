@@ -77,11 +77,11 @@ class MessagesViewModel : AbstractViewModel() {
 
     private fun getBitmapToText(text: String): Bitmap? {
         val resList = arrayListOf(
-//            R.drawable.test1,
+            R.drawable.test1
 //            R.drawable.test2,
 //            R.drawable.test3,
 //            R.drawable.test4,
-            R.drawable.test5//,
+//            R.drawable.test5,
 //            R.drawable.test6,
 //            R.drawable.test7,
 //            R.drawable.test9,

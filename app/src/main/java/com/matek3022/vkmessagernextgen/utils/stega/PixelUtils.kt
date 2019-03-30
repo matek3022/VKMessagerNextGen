@@ -31,5 +31,5 @@ fun toRGB(y: Double, cb: Double, cr: Double): Int {
     val r: Double = y + 1.402 * (cr - 128)
     val g: Double = y - 0.344136 * (cb - 128) - 0.714136 * (cr - 128)
     val b: Double = y + 1.772 * (cb - 128)
-    return Color.rgb(r.toInt(), g.toInt(), b.toInt())
+    return Color.rgb(Math.round(r).toInt(), Math.round(g).toInt(), Math.round(b).toInt())
 }

@@ -1,5 +1,6 @@
 package com.matek3022.vkmessagernextgen
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -8,6 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
+import com.matek3022.vkmessagernextgen.utils.stega.getCb
+import com.matek3022.vkmessagernextgen.utils.stega.getCr
+import com.matek3022.vkmessagernextgen.utils.stega.getY
+import com.matek3022.vkmessagernextgen.utils.stega.toRGB
 import io.reactivex.disposables.Disposable
 
 class BaseActivity : AppCompatActivity() {
@@ -21,6 +26,7 @@ class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+        test()
         adapter = DialogRVAdapter(ArrayList()) {
             startActivity(MessagesActivity.getIntent(this, it.user))
         }
@@ -38,6 +44,21 @@ class BaseActivity : AppCompatActivity() {
         })
         if (adapter.itemCount == 0) update()
         swipeRefreshLayout.setOnRefreshListener { update() }
+    }
+
+    fun test() {
+        val yellow = Color.BLUE
+        val r = Color.red(Color.BLUE)
+        val g  = Color.green(Color.BLUE)
+        val b = Color.blue(Color.BLUE)
+
+        val y = getY(Color.BLUE)
+        val cr = getCr(Color.BLUE)
+        val cb = getCb(Color.BLUE)
+
+        val ycrcbYellow = toRGB(y, cb, cr)
+
+        val rgbYellow = Color.rgb(r,g,b)
     }
 
     private fun update() {

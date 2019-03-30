@@ -27,62 +27,67 @@ fun Bitmap.codeText(text: String): Bitmap {
     byteArray.forEach {
         bitArray.addAll(getBits(it).toList())
     }
-    val pixels = getPixels()
-    pixels.inToPixels(bitArray)
-    setPixels(pixels, 1)
+//    val pixels = getPixels()
+    this.inToPixels(bitArray)
+//    setPixels(pixels, 1)
     return this
 }
 
 @Throws(Resources.NotFoundException::class)
 fun Bitmap.getText(): String {
-    val pixels = getPixels()
-    val bits = pixels.fromPixels(TEXT_ID)
+//    val pixels = getPixels()
+    val bits = this.fromPixels(TEXT_ID)
     val byteArray = booleanArrayToByteArray(bits)
     return String(byteArray)
 }
 
-fun ArrayList<ArrayList<Int>>.inToPixels(bitsArray: ArrayList<Boolean>) {
-    val n = this.size
-    val m = this[0].size
-    var matrYColor = Array(8){ DoubleArray(8) }
+fun Bitmap.inToPixels(bitsArray: ArrayList<Boolean>) {
+    val yCount = this.height
+    val xCount = this.width
     val bitsCount = bitsArray.size
     val random = Random(seed)
-    val blockNcount = n / 8
-    val blockMcount = m / 8
-    val maxBlocks = blockNcount * blockMcount
+    val blockYcount = yCount / 8
+    val blockXcount = xCount / 8
+    val maxBlocks = blockYcount * blockXcount
     val randomIndexes = IntArray(maxBlocks) { i -> i }.toMutableList()
     randomIndexes.shuffle(random)
-
     var bitsInput = 0
-
-    for (i in 0 until blockNcount) {
-        for (j in 0 until blockMcount) {
-
+    for (yBlockIndex in 0 until blockYcount) {
+        for (xBlockIndex in 0 until blockXcount) {
             if (bitsInput < bitsCount) {
-                val currIndex = i * blockMcount + j
+                val currIndex = yBlockIndex * blockXcount + xBlockIndex
                 val findingIndex = randomIndexes.indexOf(currIndex)
                 if (findingIndex != -1) {
-                    for (ik in 0..7) {
-                        for (jk in 0..7) {
-                            matrYColor[ik][jk] = getY(this[i * 8 + ik][j * 8 + jk])
+                    var matrYColor = Array(8) { DoubleArray(8) }
+                    var matrCrColor = Array(8) { DoubleArray(8) }
+                    var matrCbColor = Array(8) { DoubleArray(8) }
+                    for (xk in 0..7) {
+                        for (yk in 0..7) {
+                            val oldColor = this.getPixel(xBlockIndex * 8 + xk, yBlockIndex * 8 + yk)
+                            matrYColor[xk][yk] = getY(oldColor) - 128
+                            matrCrColor[xk][yk] = getCr(oldColor)
+                            matrCbColor[xk][yk] = getCb(oldColor)
                         }
                     }
                     matrYColor = dct(matrYColor)
                     val bit = bitsArray[bitsInput]
+//                    toQuantiz(matrYColor)
                     if (bit) {
-                        matrYColor[7][7] = 100.0
+                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 != 1)*/ matrYColor[7][7] = 100.0
                     } else {
-                        matrYColor[7][7] = -100.0
+                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 == 1) */matrYColor[7][7] = -100.0
                     }
                     bitsInput++
+//                    fromQuantiz(matrYColor)
                     matrYColor = idct(matrYColor)
-                    for (ik in 0..7) {
-                        for (jk in 0..7) {
-                            this[i * 8 + ik][j * 8 + jk] = toRGB(
-                                matrYColor[ik][jk],
-                                getCb(this[i * 8 + ik][j * 8 + jk]),
-                                getCr(this[i * 8 + ik][j * 8 + jk])
+                    for (xk in 0..7) {
+                        for (yk in 0..7) {
+                            val newColor = toRGB(
+                                matrYColor[xk][yk] + 128,
+                                matrCbColor[xk][yk],
+                                matrCrColor[xk][yk]
                             )
+                            this.setPixel(xBlockIndex * 8 + xk, yBlockIndex * 8 + yk, newColor)
                         }
                     }
                 }
@@ -92,15 +97,14 @@ fun ArrayList<ArrayList<Int>>.inToPixels(bitsArray: ArrayList<Boolean>) {
 }
 
 @Throws(Resources.NotFoundException::class)
-fun ArrayList<ArrayList<Int>>.fromPixels(id: String): List<Boolean> {
-    val n = this.size
-    val m = this[0].size
-    var matrYColor = Array(8){ DoubleArray(8) }
+fun Bitmap.fromPixels(id: String): List<Boolean> {
+    val yCount = this.height
+    val xCount = this.width
     val random = Random(seed)
-    val blockNcount = n / 8
-    val blockMcount = m / 8
-    var bitsCount = blockMcount * blockNcount / 4
-    val maxBlocks = blockNcount * blockMcount
+    val blockYcount = yCount / 8
+    val blockXcount = xCount / 8
+    var bitsCount = blockXcount * blockYcount / 4
+    val maxBlocks = blockYcount * blockXcount
     val randomIndexes = IntArray(maxBlocks) { i -> i }.toMutableList()
     randomIndexes.shuffle(random)
     val res = ArrayList<Boolean>()
@@ -109,19 +113,21 @@ fun ArrayList<ArrayList<Int>>.fromPixels(id: String): List<Boolean> {
 
     val idBytes = id.toByteArray()
 
-    for (i in 0 until blockNcount) {
-        for (j in 0 until blockMcount) {
+    for (yBlockIndex in 0 until blockYcount) {
+        for (xBlockIndex in 0 until blockXcount) {
             if (bitsRead < bitsCount) {
                 if (bitsRead < bitsCount) {
-                    val currIndex = i * blockMcount + j
+                    val currIndex = yBlockIndex * blockXcount + xBlockIndex
                     val findingIndex = randomIndexes.indexOf(currIndex)
                     if (findingIndex != -1) {
-                        for (ik in 0..7) {
-                            for (jk in 0..7) {
-                                matrYColor[ik][jk] = getY(this[i * 8 + ik][j * 8 + jk])
+                        var matrYColor = Array(8) { DoubleArray(8) }
+                        for (xk in 0..7) {
+                            for (yk in 0..7) {
+                                matrYColor[xk][yk] = getY(this.getPixel(xBlockIndex * 8 + xk, yBlockIndex * 8 + yk)) - 128
                             }
                         }
                         matrYColor = dct(matrYColor)
+//                        toQuantiz(matrYColor)
                         res.add(matrYColor[7][7] > 0)
                         bitsRead++
 
@@ -169,24 +175,15 @@ fun Bitmap.getPixels(): ArrayList<ArrayList<Int>> {
     return pixels
 }
 
-fun Bitmap.setPixels(pixels: ArrayList<ArrayList<Int>>, corr: Int = 256) {
-    for (i in 0 until width) {
-        for (j in 0 until height) {
-            val pixel = pixels[i][j]
-            this.setPixel(i, j, pixel/*Color.rgb(pixel.red / corr, pixel.green / corr, pixel.blue / corr)*/)
-        }
-    }
-}
-
-private val Q = intArrayOf(
-    16, 11, 10, 16, 24, 40, 51, 61,
-    12, 12, 14, 19, 26, 58, 60, 55,
-    14, 13, 16, 24, 40, 57, 69, 56,
-    14, 17, 22, 29, 51, 87, 80, 62,
-    18, 22, 37, 56, 68, 109, 103, 77,
-    24, 35, 55, 64, 81, 104, 113, 92,
-    49, 64, 78, 87, 103, 121, 120, 101,
-    72, 92, 95, 95, 112, 100, 103, 99
+private val Q = arrayOf(
+    intArrayOf(16, 11, 10, 16, 24, 40, 51, 61),
+    intArrayOf(12, 12, 14, 19, 26, 58, 60, 55),
+    intArrayOf(14, 13, 16, 24, 40, 57, 69, 56),
+    intArrayOf(14, 17, 22, 29, 51, 87, 80, 62),
+    intArrayOf(18, 22, 37, 56, 68, 109, 103, 77),
+    intArrayOf(24, 35, 55, 64, 81, 104, 113, 92),
+    intArrayOf(49, 64, 78, 87, 103, 121, 120, 101),
+    intArrayOf(72, 92, 95, 98, 112, 100, 103, 99)
 )
 
 fun DoubleArray.devideArray(x: Int) {
@@ -195,15 +192,19 @@ fun DoubleArray.devideArray(x: Int) {
     }
 }
 
-fun toQuantiz(arr: DoubleArray) {
-    arr.forEachIndexed { index, fl ->
-        arr[index] = Math.round(fl / Q[index]).toDouble()
+fun toQuantiz(arr: Array<DoubleArray>) {
+    arr.forEachIndexed { index1, arr1 ->
+        arr1.forEachIndexed { index, d ->
+            arr[index1][index] = Math.round(d / Q[index1][index]).toDouble()
+        }
     }
 }
 
-fun fromQuantiz(arr: DoubleArray) {
-    arr.forEachIndexed { index, fl ->
-        arr[index] = Math.round(fl * Q[index]).toDouble()
+fun fromQuantiz(arr: Array<DoubleArray>) {
+    arr.forEachIndexed { index1, arr1 ->
+        arr1.forEachIndexed { index, d ->
+            arr[index1][index] = d * Q[index1][index]
+        }
     }
 }
 

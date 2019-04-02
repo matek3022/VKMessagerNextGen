@@ -52,18 +52,22 @@ class BaseActivity : AppCompatActivity() {
         for (i in 1..100) {
             resList.add(i to getPsnrFromPercentage(i))
         }
+        return
     }
 
     fun getPsnrFromPercentage(percentage: Int): Double{
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         options.inMutable = true
-        var c = BitmapFactory.decodeResource(resources, R.drawable.test6, options)
-        var c1 = BitmapFactory.decodeResource(resources, R.drawable.test6, options)
+        var c = BitmapFactory.decodeResource(resources, R.drawable.test13, options)
+        var c1 = c.copy(Bitmap.Config.ARGB_8888, false)
         val text = generateTextToPercentage(c, percentage)
         c.codeText(text)
         Log.wtf("tag_percentage", percentage.toString())
-        return computePsnr(c, c1)
+        val res = computePsnr(c, c1)
+        c.recycle()
+        c1.recycle()
+        return res
     }
 
     private fun update() {

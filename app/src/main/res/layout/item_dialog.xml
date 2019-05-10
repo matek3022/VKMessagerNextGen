@@ -4,14 +4,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
-                android:background="@android:color/white"
                 android:orientation="vertical">
 
     <RelativeLayout
             android:id="@+id/background"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white">
+            android:layout_height="wrap_content">
 
         <RelativeLayout
                 android:id="@+id/container"
@@ -31,6 +29,7 @@
                     android:id="@+id/personNameTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:layout_marginLeft="5dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="1dp"
@@ -45,6 +44,7 @@
                     android:id="@+id/lastMessageTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:layout_alignBottom="@+id/avatarIV"
                     android:layout_below="@+id/personNameTV"
                     android:layout_marginLeft="5dp"
@@ -65,6 +65,7 @@
                     android:id="@+id/timeTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:layout_alignBottom="@+id/personNameTV"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
@@ -84,13 +85,13 @@
                     android:gravity="center"
                     android:padding="4dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:textColor="@color/accent"/>
+                    android:textColor="@color/primary"/>
 
             <ImageView
                     android:id="@+id/onlineIdentifierIV"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:src="@drawable/tochka"
+                    android:src="@drawable/ic_dot"
                     android:layout_alignBottom="@+id/avatarIV"
                     android:layout_alignEnd="@+id/avatarIV"
                     android:layout_alignRight="@+id/avatarIV"/>
@@ -100,7 +101,7 @@
                 android:id="@+id/typing_tv"
                 android:visibility="invisible"
                 android:layout_above="@+id/shape_line"
-                android:textColor="@color/gray_alpha_30"
+                android:textColor="@color/white_alpha_30"
                 android:text="Набирает сообщение..."
                 android:gravity="center"
                 android:textSize="12sp"

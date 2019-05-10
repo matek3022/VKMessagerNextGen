@@ -29,8 +29,10 @@ class MessageHolder(
     override fun bind(item: Message) {
         title.text = convertToTime(item.date)
         text.text = item.text
+        attachContainer.visibility = View.GONE
         attachContainer.removeAllViews()
         item.attachments.forEach {
+            if (it.photo != null) attachContainer.visibility = View.VISIBLE
             it.photo?.let { photo ->
                 val image = ImageView(attachContainer.context).apply { adjustViewBounds = true }
                 image.setOnClickListener { imageClick?.invoke(photo) }
@@ -41,5 +43,6 @@ class MessageHolder(
         root.setOnClickListener {
             click?.invoke(item)
         }
+        root.requestLayout()
     }
 }

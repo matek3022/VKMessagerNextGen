@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -20,6 +21,7 @@ import com.matek3022.vkmessagernextgen.ui.message.MessageRVAdapter
 import com.matek3022.vkmessagernextgen.utils.PreferencesManager
 import com.matek3022.vkmessagernextgen.utils.displayOkMessage
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_messages.*
 
 class MessagesActivity : AppCompatActivity() {
 
@@ -45,8 +47,11 @@ class MessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeButtonEnabled(true)
+        window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         user = intent.getSerializableExtra(EXTRA_USER) as User?
-        title = "${user?.firstName} ${user?.lastName}"
+        supportActionBar?.title = "${user?.firstName} ${user?.lastName}"
         messageVM = ViewModelProviders.of(this).get(MessagesViewModel::class.java)
         adapter = MessageRVAdapter(ArrayList(), user?.id ?: 0)
         rv = findViewById(R.id.list)

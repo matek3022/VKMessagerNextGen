@@ -3,14 +3,20 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="@color/black_alpha_50"
+        android:background="@color/primary_transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MessagesActivity">
     <RelativeLayout
             android:background="@drawable/background"
+            android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                app:titleTextColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/messageSendContainer"
                 android:layout_alignParentBottom="true"
@@ -45,6 +51,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
+                android:layout_below="@id/toolbar"
                 android:layout_above="@id/messageSendContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

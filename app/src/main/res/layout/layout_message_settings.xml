@@ -8,13 +8,15 @@
     <TextView
             android:id="@+id/titleDialog"
             android:text="Управление встраиванием"
-            style="@style/text.title"/>
+            style="@style/text.title"
+            android:textColor="@color/black"/>
 
     <TextView
             android:id="@+id/textDialog"
             android:text="Введите ключ шифрования информации, встраиваемой в изображения"
             android:layout_marginTop="16dp"
-            style="@style/text"/>
+            style="@style/text"
+            android:textColor="@color/black"/>
     <EditText
             android:id="@+id/inputKeyDialog"
             android:layout_marginTop="16dp"

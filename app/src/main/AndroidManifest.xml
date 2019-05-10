@@ -13,8 +13,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name="com.matek3022.vkmessagernextgen.MessagesActivity"
+                  android:theme="@style/AppTheme.NoActionBar"
                   android:windowSoftInputMode="adjustResize"/>
-        <activity android:name="com.matek3022.vkmessagernextgen.BaseActivity"/>
+        <activity android:name="com.matek3022.vkmessagernextgen.BaseActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
         <activity
                 android:name="com.matek3022.vkmessagernextgen.LoginActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>

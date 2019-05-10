@@ -22,7 +22,7 @@ fun convertToTime(unixTime: Int): String {
     if (year == curryear) {
         if (month == currmonth) {
             if (day == currday) {
-                return SimpleDateFormat("hh:mm", Locale.ENGLISH).format(df)
+                return SimpleDateFormat("HH:mm", Locale.ENGLISH).format(df)
             } else return "$day ${getMonthFromInt(month)}"
         } else return getMonth(month)
     } else return year

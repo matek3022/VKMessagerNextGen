@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.matek3022.vkmessagernextgen.rxapi.model.User
 import com.matek3022.vkmessagernextgen.rxapi.vm.MessagesViewModel
 import com.matek3022.vkmessagernextgen.ui.message.MessageRVAdapter
+import com.matek3022.vkmessagernextgen.utils.PreferencesManager
+import com.matek3022.vkmessagernextgen.utils.displayOkMessage
 import io.reactivex.disposables.Disposable
 
 class MessagesActivity : AppCompatActivity() {
@@ -105,15 +108,24 @@ class MessagesActivity : AppCompatActivity() {
 
     private fun showStegaDialog() {
         val dialog = AlertDialog.Builder(this@MessagesActivity)
+        val view = layoutInflater.inflate(R.layout.layout_message_settings, null)
+        val inputKeyET = view.findViewById<EditText>(R.id.inputKeyDialog)
+        val descriptionText = view.findViewById<TextView>(R.id.textDialog)
+        inputKeyET.isEnabled = !isStega
+        if (isStega) descriptionText.text = "Текущий используемый ключ для шифрования информации в изображении"
+        inputKeyET.setText(PreferencesManager.getCryptKeyById(user?.id ?: 0))
+        dialog.setView(view)
         dialog.setCancelable(false)
-        dialog.setMessage("Включить/Выключить стеганографическое встраивание?")
-        dialog.setPositiveButton("Вкл") { _, _ ->
-            isStega = true
+        dialog.setPositiveButton(if (isStega) "Выкл" else "Вкл") { _, _ ->
+            if (!isStega && inputKeyET.text.isEmpty()) {
+                displayOkMessage(this@MessagesActivity, "Ключ не может быть пустым", null)
+                return@setPositiveButton
+            }
+            PreferencesManager.setCryptKeyById(user?.id ?: 0, inputKeyET.text.toString())
+            isStega = !isStega
             update()
         }
-        dialog.setNegativeButton("Выкл") { _, _ ->
-            isStega = false
-            update()
+        dialog.setNegativeButton("Отмена") { _, _ ->
         }
         dialog.show()
     }

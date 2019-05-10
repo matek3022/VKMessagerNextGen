@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:padding="16dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/titleDialog"
+            android:text="Управление встраиванием"
+            style="@style/text.title"/>
+
+    <TextView
+            android:id="@+id/textDialog"
+            android:text="Введите ключ шифрования информации, встраиваемой в изображения"
+            android:layout_marginTop="16dp"
+            style="@style/text"/>
+    <EditText
+            android:id="@+id/inputKeyDialog"
+            android:layout_marginTop="16dp"
+            android:hint="Введите ключ для диалога"
+            style="@style/text"
+            android:layout_width="match_parent"/>
+</LinearLayout>

@@ -3,6 +3,7 @@ package com.matek3022.vkmessagernextgen.utils.stega
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
+import com.matek3022.vkmessagernextgen.utils.CryptUtils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -15,9 +16,9 @@ const val seed = 4L
 
 const val TEXT_ID = "text"
 
-fun Bitmap.codeText(text: String): Bitmap {
+fun Bitmap.codeText(text: String, localKey: String = ""): Bitmap {
     val bitArray = ArrayList<Boolean>()
-    val byteArray = text.toByteArray()
+    val byteArray = CryptUtils.cryptString(text, localKey)
     val byteSizeArr = Utils.intToByteArray(byteArray.size)
     TEXT_ID.toByteArray().forEach {
         bitArray.addAll(getBits(it).toList())
@@ -35,11 +36,11 @@ fun Bitmap.codeText(text: String): Bitmap {
 }
 
 @Throws(Resources.NotFoundException::class)
-fun Bitmap.getText(): String {
+fun Bitmap.getText(localKey: String = ""): String {
 //    val pixels = getPixels()
     val bits = this.fromPixels(TEXT_ID)
     val byteArray = booleanArrayToByteArray(bits)
-    return String(byteArray)
+    return CryptUtils.decryptString(byteArray, localKey)
 }
 
 fun Bitmap.inToPixels(bitsArray: ArrayList<Boolean>) {

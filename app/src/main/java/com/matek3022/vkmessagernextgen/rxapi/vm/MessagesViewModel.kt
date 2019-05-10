@@ -8,6 +8,8 @@ import com.matek3022.vkmessagernextgen.App
 import com.matek3022.vkmessagernextgen.R
 import com.matek3022.vkmessagernextgen.rxapi.model.Message
 import com.matek3022.vkmessagernextgen.rxapi.result.ResultSavePhoto
+import com.matek3022.vkmessagernextgen.utils.getMyKey
+import com.matek3022.vkmessagernextgen.utils.getOtherKey
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
 import com.matek3022.vkmessagernextgen.utils.stega.getText
 import io.reactivex.Observable
@@ -54,14 +56,14 @@ class MessagesViewModel : AbstractViewModel() {
         }
     }
 
-    fun codeText(text: String, start: (() -> Unit)? = null, stop: ((b: Bitmap?, e: Exception?) -> Unit)? = null) {
+    fun codeText(chatUserId: Int, text: String, start: (() -> Unit)? = null, stop: ((b: Bitmap?, e: Exception?) -> Unit)? = null) {
         start?.invoke()
         launch {
             Observable.create<Bitmap> {
                 val normBitmap = getBitmapToText(text)
                 if (normBitmap == null) it.onError(Exception("Слишком большой текст, нет подходящей картинки для встраивания"))
                 else {
-                    normBitmap.codeText(text)
+                    normBitmap.codeText(text, getMyKey(chatUserId))
                     it.onNext(normBitmap)
                     it.onComplete()
                 }
@@ -127,7 +129,8 @@ class MessagesViewModel : AbstractViewModel() {
                                 try {
                                     val url = URL(message.attachments.first().photo?.getOriginalUrl())
                                     val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                                    val textOut = bmp.getText()
+                                    val localKey = if (message.fromId == userId) getOtherKey(userId) else getMyKey(userId)
+                                    val textOut = bmp.getText(localKey)
                                     message.text = textOut
                                     message.attachments = arrayListOf()
                                 } catch (e: Exception) {
@@ -211,7 +214,7 @@ class MessagesViewModel : AbstractViewModel() {
     ) {
         start?.invoke()
         if (isCoded) {
-            codeText(message, stop = { bitmap, e ->
+            codeText(userId, message, stop = { bitmap, e ->
                 e?.let {
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                     stop?.invoke()

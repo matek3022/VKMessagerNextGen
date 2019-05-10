@@ -96,10 +96,10 @@
     <color name="black_alpha_80">#34000000</color>
     <color name="black_alpha_90">#1A000000</color>
 
-    <color name="primary">#00BCD4</color>
-    <color name="primary_dark">#0097A7</color>
-    <color name="primary_light">#B2EBF2</color>
-    <color name="accent">#FDDDE6</color>
+    <color name="primary">#7b1fa2</color>
+    <color name="primary_dark">#4a0072</color>
+    <color name="primary_light">#ae52d4</color>
+    <color name="accent">#003300</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>

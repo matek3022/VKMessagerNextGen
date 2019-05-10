@@ -12,7 +12,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
-import com.matek3022.vkmessagernextgen.utils.stega.computePsnr
 import com.matek3022.vkmessagernextgen.utils.stega.computeSF
 import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
@@ -28,6 +27,7 @@ class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+        title = "Диалоги"
 //        test()
         adapter = DialogRVAdapter(ArrayList()) {
             startActivity(MessagesActivity.getIntent(this, it.user))

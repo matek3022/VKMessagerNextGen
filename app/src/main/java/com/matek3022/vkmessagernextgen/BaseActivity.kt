@@ -13,6 +13,7 @@ import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
 import com.matek3022.vkmessagernextgen.utils.stega.computePsnr
+import com.matek3022.vkmessagernextgen.utils.stega.computeSF
 import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
 
@@ -59,14 +60,15 @@ class BaseActivity : AppCompatActivity() {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         options.inMutable = true
-        var c = BitmapFactory.decodeResource(resources, R.drawable.test13, options)
-        var c1 = c.copy(Bitmap.Config.ARGB_8888, false)
-        val text = generateTextToPercentage(c, percentage)
-        c.codeText(text)
+        var cw = BitmapFactory.decodeResource(resources, R.drawable.test7, options)
+        var c = cw.copy(Bitmap.Config.ARGB_8888, false)
+        val text = generateTextToPercentage(cw, percentage)
+        cw.codeText(text)
         Log.wtf("tag_percentage", percentage.toString())
-        val res = computePsnr(c, c1)
+//        val res = computePsnr(cw, c)
+        val res = computeSF(c, cw)
+        cw.recycle()
         c.recycle()
-        c1.recycle()
         return res
     }
 

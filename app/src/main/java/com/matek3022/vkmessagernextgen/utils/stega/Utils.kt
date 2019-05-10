@@ -271,10 +271,26 @@ fun computePsnr(bitmap1: Bitmap, bitmap2: Bitmap): Double {
     for (x in 0 until width) {
         for (y in 0 until height) {
             mse += Math.abs((Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))) * (Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))))
+            mse += Math.abs((Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))) * (Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))))
+            mse += Math.abs((Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))) * (Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))))
         }
     }
-    mse /= width * height
+    mse /= width * height * 3
     return 10 * Math.log10(255.0 * 255 / mse)
+}
+
+fun computeSF(i: Bitmap, iw: Bitmap): Double {
+    var sum1 = 0.0
+    var sum2 = 0.0
+    val width = i.width
+    val height = i.height
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            sum1 += Color.blue(i.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(i.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(i.getPixel(x, y))*Color.green(iw.getPixel(x, y))
+            sum2 += Color.blue(iw.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(iw.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(iw.getPixel(x, y))*Color.green(iw.getPixel(x, y))
+        }
+    }
+    return sum1/sum2
 }
 
 fun generateTextToPercentage(bitmap: Bitmap, percentage: Int): String {

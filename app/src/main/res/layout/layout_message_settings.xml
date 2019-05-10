@@ -22,5 +22,6 @@
             android:layout_marginTop="16dp"
             android:hint="Введите ключ для диалога"
             style="@style/text"
+            android:textColor="@color/black"
             android:layout_width="match_parent"/>
 </LinearLayout>

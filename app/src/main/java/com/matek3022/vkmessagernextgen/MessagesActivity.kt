@@ -120,7 +120,6 @@ class MessagesActivity : AppCompatActivity() {
         if (isStega) descriptionText.text = "Текущий используемый ключ для шифрования информации в изображении"
         inputKeyET.setText(PreferencesManager.getCryptKeyById(user?.id ?: 0))
         dialog.setView(view)
-        dialog.setCancelable(false)
         dialog.setPositiveButton(if (isStega) "Выкл" else "Вкл") { _, _ ->
             if (!isStega && inputKeyET.text.isEmpty()) {
                 displayOkMessage(this@MessagesActivity, "Ключ не может быть пустым", null)

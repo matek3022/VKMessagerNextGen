@@ -28,6 +28,8 @@ class MessageHolder(
 
     override fun bind(item: Message) {
         title.text = convertToTime(item.date)
+        if (item.text.isEmpty()) text.visibility = View.GONE
+        else text.visibility = View.VISIBLE
         text.text = item.text
         attachContainer.visibility = View.GONE
         attachContainer.removeAllViews()

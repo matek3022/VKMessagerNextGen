@@ -27,6 +27,7 @@ class MessageHolder(
     private val root = itemView.findViewById<View>(R.id.root)
 
     override fun bind(item: Message) {
+        //todo добавить анимацию загрузки изображения и изменения полей текста
         title.text = convertToTime(item.date)
         if (item.text.isEmpty()) text.visibility = View.GONE
         else text.visibility = View.VISIBLE

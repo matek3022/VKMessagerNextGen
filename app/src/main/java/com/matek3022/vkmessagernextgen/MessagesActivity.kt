@@ -4,10 +4,9 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.view.*
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -61,10 +60,15 @@ class MessagesActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this).apply { reverseLayout = true }
         disposables.add(messageVM.messagesSubject.subscribe { new ->
             (adapter.items as ArrayList).let { old ->
-                old.clear()
-                old.addAll(new)
+                if (old != new) {
+                    if (old.size == 0) {
+                        TransitionManager.beginDelayedTransition(mainRoot, Slide(Gravity.BOTTOM))
+                    }
+                    old.clear()
+                    old.addAll(new)
+                    adapter.notifyDataSetChanged()
+                }
             }
-            adapter.notifyDataSetChanged()
         })
         if (adapter.itemCount == 0) update()
 

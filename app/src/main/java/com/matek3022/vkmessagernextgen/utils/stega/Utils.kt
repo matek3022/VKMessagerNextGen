@@ -266,17 +266,19 @@ fun booleanArrayToByteArray(booll: List<Boolean>): ByteArray {
 }
 
 fun computePsnr(bitmap1: Bitmap, bitmap2: Bitmap): Double {
-    var mse = 0L
+    var mse = 0.0
     val width = bitmap1.width
     val height = bitmap1.height
     for (x in 0 until width) {
         for (y in 0 until height) {
-            mse += Math.abs((Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))) * (Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))))
-            mse += Math.abs((Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))) * (Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))))
-            mse += Math.abs((Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))) * (Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))))
+            var err = 0.0
+            err += Math.abs((Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))) * (Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))))
+            err += Math.abs((Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))) * (Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))))
+            err += Math.abs((Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))) * (Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))))
+            mse += err / 3
         }
     }
-    mse /= width * height * 3
+    mse /= width * height// * 3
     return 10 * Math.log10(255.0 * 255 / mse)
 }
 

@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
+import com.matek3022.vkmessagernextgen.utils.stega.computePsnr
 import com.matek3022.vkmessagernextgen.utils.stega.computeSF
 import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
@@ -33,6 +34,7 @@ class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base)
         title = "Диалоги"
 //        test()
+//        testSF()
         adapter = DialogRVAdapter(ArrayList()) {
             startActivity(MessagesActivity.getIntent(this, it.user))
         }
@@ -57,6 +59,11 @@ class BaseActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener { update() }
     }
 
+    fun testSF() {
+        val res = computeSF(BitmapFactory.decodeResource(resources, R.drawable.test1, BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }), BitmapFactory.decodeResource(resources, R.drawable.test2, BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }))
+        return
+    }
+
     fun test() {
         val resList = ArrayList<Pair<Int, Double>>()
         for (i in 1..100) {
@@ -69,13 +76,14 @@ class BaseActivity : AppCompatActivity() {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         options.inMutable = true
-        var cw = BitmapFactory.decodeResource(resources, R.drawable.test7, options)
+        var cw = BitmapFactory.decodeResource(resources, R.drawable.test9, options)
         var c = cw.copy(Bitmap.Config.ARGB_8888, false)
         val text = generateTextToPercentage(cw, percentage)
         cw.codeText(text)
-        Log.wtf("tag_percentage", percentage.toString())
-//        val res = computePsnr(cw, c)
-        val res = computeSF(c, cw)
+        val res = computePsnr(cw, c)
+        Log.wtf("tag_percentage", "$percentage${if (percentage < 10) " " else ""} PSNR = ${res.toString().replace(".", ",")}")
+
+//        val res = computeSF(c, cw)
         cw.recycle()
         c.recycle()
         return res

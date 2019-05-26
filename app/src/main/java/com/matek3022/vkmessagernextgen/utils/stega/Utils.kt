@@ -289,8 +289,8 @@ fun computeSF(i: Bitmap, iw: Bitmap): Double {
     val height = i.height
     for (x in 0 until width) {
         for (y in 0 until height) {
-            sum1 += Color.blue(i.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(i.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(i.getPixel(x, y))*Color.green(iw.getPixel(x, y))
-            sum2 += Color.blue(iw.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(iw.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(iw.getPixel(x, y))*Color.green(iw.getPixel(x, y))
+            sum1 += (Color.blue(i.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(i.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(i.getPixel(x, y))*Color.green(iw.getPixel(x, y))) / 3.0
+            sum2 += (Color.blue(iw.getPixel(x, y))*Color.blue(iw.getPixel(x, y)) + Color.red(iw.getPixel(x, y))*Color.red(iw.getPixel(x, y)) + Color.green(iw.getPixel(x, y))*Color.green(iw.getPixel(x, y))) / 3.0
         }
     }
     return sum1/sum2

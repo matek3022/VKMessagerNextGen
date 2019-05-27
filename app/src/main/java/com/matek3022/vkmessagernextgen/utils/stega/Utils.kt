@@ -29,15 +29,12 @@ fun Bitmap.codeText(text: String, localKey: String = ""): Bitmap {
     byteArray.forEach {
         bitArray.addAll(getBits(it).toList())
     }
-//    val pixels = getPixels()
     this.inToPixels(bitArray)
-//    setPixels(pixels, 1)
     return this
 }
 
 @Throws(Resources.NotFoundException::class)
 fun Bitmap.getText(localKey: String = ""): String {
-//    val pixels = getPixels()
     val bits = this.fromPixels(TEXT_ID)
     val byteArray = booleanArrayToByteArray(bits)
     return CryptUtils.decryptString(byteArray, localKey)
@@ -73,14 +70,12 @@ fun Bitmap.inToPixels(bitsArray: ArrayList<Boolean>) {
                     }
                     matrYColor = dct(matrYColor)
                     val bit = bitsArray[bitsInput]
-//                    toQuantiz(matrYColor)
                     if (bit) {
-                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 != 1)*/ matrYColor[7][7] = 10.0
+                        matrYColor[7][7] = 10.0
                     } else {
-                        /*if (Math.round(matrYColor[7][7]).toInt() % 2 == 1) */matrYColor[7][7] = -10.0
+                        matrYColor[7][7] = -10.0
                     }
                     bitsInput++
-//                    fromQuantiz(matrYColor)
                     matrYColor = idct(matrYColor)
                     for (xk in 0..7) {
                         for (yk in 0..7) {
@@ -129,7 +124,6 @@ fun Bitmap.fromPixels(id: String): List<Boolean> {
                             }
                         }
                         matrYColor = dct(matrYColor)
-//                        toQuantiz(matrYColor)
                         res.add(matrYColor[7][7] > 0)
                         bitsRead++
 
@@ -280,6 +274,23 @@ fun computePsnr(bitmap1: Bitmap, bitmap2: Bitmap): Double {
     }
     mse /= width * height// * 3
     return 10 * Math.log10(255.0 * 255 / mse)
+}
+
+fun computeSKO(bitmap1: Bitmap, bitmap2: Bitmap): Double {
+    var mse = 0.0
+    val width = bitmap1.width
+    val height = bitmap1.height
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            var err = 0.0
+            err += Math.abs((Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))) * (Color.blue(bitmap1.getPixel(x, y)) - Color.blue(bitmap2.getPixel(x, y))))
+            err += Math.abs((Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))) * (Color.red(bitmap1.getPixel(x, y)) - Color.red(bitmap2.getPixel(x, y))))
+            err += Math.abs((Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))) * (Color.green(bitmap1.getPixel(x, y)) - Color.green(bitmap2.getPixel(x, y))))
+            mse += err / 3
+        }
+    }
+    mse /= width * height
+    return mse
 }
 
 fun computeSF(i: Bitmap, iw: Bitmap): Double {

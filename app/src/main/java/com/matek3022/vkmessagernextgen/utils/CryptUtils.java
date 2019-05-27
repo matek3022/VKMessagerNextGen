@@ -48,12 +48,6 @@ public class CryptUtils {
     }
 
     public static byte[] cryptString(String str, String localKey) {
-//        String key = localKey;
-//        if (key.length() != 32) {
-//            for (int i = key.length(); i < 32; i++) {
-//                key += "A";
-//            }
-//        }
         String string = fixBlockSizes(str);
         byte[] bytesKey = sha256(localKey);
         byte[] bytesStr = string.getBytes();
@@ -69,12 +63,6 @@ public class CryptUtils {
     }
 
     public static String decryptString(byte[] crypt, String localKey) {
-//        String key = localKey;
-//        if (key.length() != 32) {
-//            for (int i = key.length(); i < 32; i++) {
-//                key += "A";
-//            }
-//        }
         byte[] bytesKey = sha256(localKey);
         byte[] decryptByteArray = Process(crypt, bytesKey, sBox, false);
         String str = new String(decryptByteArray);

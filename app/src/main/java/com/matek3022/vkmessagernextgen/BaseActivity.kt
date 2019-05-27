@@ -15,7 +15,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
-import com.matek3022.vkmessagernextgen.utils.stega.computePsnr
 import com.matek3022.vkmessagernextgen.utils.stega.computeSF
 import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
@@ -35,6 +34,7 @@ class BaseActivity : AppCompatActivity() {
         title = "Диалоги"
 //        test()
 //        testSF()
+//        megaTest()
         adapter = DialogRVAdapter(ArrayList()) {
             startActivity(MessagesActivity.getIntent(this, it.user))
         }
@@ -72,16 +72,34 @@ class BaseActivity : AppCompatActivity() {
         return
     }
 
-    fun getPsnrFromPercentage(percentage: Int): Double{
+    fun megaTest() {
+        val resList = ArrayList<Double>()
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         options.inMutable = true
-        var cw = BitmapFactory.decodeResource(resources, R.drawable.test9, options)
-        var c = cw.copy(Bitmap.Config.ARGB_8888, false)
+        val bitmapa = BitmapFactory.decodeResource(resources, R.drawable.test1, options)
+        for (i in 44..100) {//43 уже посчиталось
+            val stageList = ArrayList<Double>()
+            for (j in 1..100) {
+                stageList.add(getPsnrFromPercentage(i, bitmapa))
+            }
+            val sr = stageList.toDoubleArray().sum() / 100
+            Log.wtf("tag_iter", "$i${if (i < 10) " " else ""} SF with 100 iter per each = ${sr.toString().replace(".", ",")}")
+            resList.add(sr)
+        }
+        return
+    }
+
+    fun getPsnrFromPercentage(percentage: Int, btmp: Bitmap? = null): Double{
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        options.inMutable = true
+        var cw = if (btmp != null) btmp.copy(Bitmap.Config.ARGB_8888, true) else BitmapFactory.decodeResource(resources, R.drawable.test1, options)
+        var c = if (btmp != null) btmp.copy(Bitmap.Config.ARGB_8888, false) else cw.copy(Bitmap.Config.ARGB_8888, false)
         val text = generateTextToPercentage(cw, percentage)
         cw.codeText(text)
-        val res = computePsnr(cw, c)
-        Log.wtf("tag_percentage", "$percentage${if (percentage < 10) " " else ""} PSNR = ${res.toString().replace(".", ",")}")
+        val res = computeSF(cw, c)
+        Log.wtf("tag_percentage", "$percentage${if (percentage < 10) " " else ""} SF = ${res.toString().replace(".", ",")}")
 
 //        val res = computeSF(c, cw)
         cw.recycle()

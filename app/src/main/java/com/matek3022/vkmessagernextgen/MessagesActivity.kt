@@ -4,20 +4,23 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.transition.Slide
-import android.transition.TransitionManager
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.matek3022.vkmessagernextgen.rxapi.model.User
 import com.matek3022.vkmessagernextgen.rxapi.vm.MessagesViewModel
 import com.matek3022.vkmessagernextgen.ui.message.MessageRVAdapter
 import com.matek3022.vkmessagernextgen.utils.PreferencesManager
+import com.matek3022.vkmessagernextgen.utils.diff.MessagesDiffUtil
 import com.matek3022.vkmessagernextgen.utils.displayOkMessage
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_messages.*
@@ -60,14 +63,11 @@ class MessagesActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this).apply { reverseLayout = true }
         disposables.add(messageVM.messagesSubject.subscribe { new ->
             (adapter.items as ArrayList).let { old ->
-                if (old != new) {
-                    if (old.size == 0) {
-                        TransitionManager.beginDelayedTransition(mainRoot, Slide(Gravity.BOTTOM))
-                    }
-                    old.clear()
-                    old.addAll(new)
-                    adapter.notifyDataSetChanged()
-                }
+                val dialogDiffUtil = MessagesDiffUtil(old, new)
+                val diffResult = DiffUtil.calculateDiff(dialogDiffUtil, true)
+                adapter.items = new
+                diffResult.dispatchUpdatesTo(adapter)
+                rv.scrollToPosition(0)
             }
         })
         if (adapter.itemCount == 0) update()

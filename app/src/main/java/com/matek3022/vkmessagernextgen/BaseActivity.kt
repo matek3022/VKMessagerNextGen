@@ -3,22 +3,20 @@ package com.matek3022.vkmessagernextgen
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.transition.Slide
-import android.transition.TransitionManager
 import android.util.Log
-import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.matek3022.vkmessagernextgen.rxapi.vm.DialogsViewModel
 import com.matek3022.vkmessagernextgen.ui.dialog.DialogRVAdapter
+import com.matek3022.vkmessagernextgen.utils.diff.DialogDiffUtil
 import com.matek3022.vkmessagernextgen.utils.stega.codeText
 import com.matek3022.vkmessagernextgen.utils.stega.computeSF
 import com.matek3022.vkmessagernextgen.utils.stega.generateTextToPercentage
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_base.*
 
 class BaseActivity : AppCompatActivity() {
 
@@ -45,14 +43,19 @@ class BaseActivity : AppCompatActivity() {
         dialogsViewModel = ViewModelProviders.of(this).get(DialogsViewModel::class.java)
         disposables.add(dialogsViewModel.dialogsSubject.subscribe {new ->
             (adapter.items as ArrayList).let { old ->
-                if (old != new) {
-                    if (old.size == 0) {
-                        TransitionManager.beginDelayedTransition(mainRoot, Slide(Gravity.BOTTOM))
-                    }
-                    old.clear()
-                    old.addAll(new)
-                    adapter.notifyDataSetChanged()
-                }
+                val dialogDiffUtil = DialogDiffUtil(old, new)
+                val diffResult = DiffUtil.calculateDiff(dialogDiffUtil, true)
+                adapter.items = new
+                diffResult.dispatchUpdatesTo(adapter)
+                rv.scrollToPosition(0)
+//                if (old != new) {
+//                    if (old.size == 0) {
+//                        TransitionManager.beginDelayedTransition(mainRoot, Slide(Gravity.BOTTOM))
+//                    }
+//                    old.clear()
+//                    old.addAll(new)
+//                    adapter.notifyDataSetChanged()
+//                }
             }
         })
         if (adapter.itemCount == 0) update()
